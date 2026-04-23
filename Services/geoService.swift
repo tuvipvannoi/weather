@@ -23,8 +23,8 @@ final class GeocodingService: GeocodingServiceProtocol {
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
 
         guard let url = URL(
-            string: "https://api.openweathermap.org/geo/1.0/direct?q=\(encodedCity)&limit=1&appid=\(APIConfig.openWeatherAPIKey)"
-        ) else {
+                    string: "https://api.weatherapi.com/v1/search.json?key=\(APIConfig.openWeatherAPIKey)&q=\(encodedCity)"
+                ) else {
             throw GeocodingServiceError.invalidURL
         }
 

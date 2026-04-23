@@ -12,7 +12,7 @@ struct EmptyStateView: View {
             Text("Weather App")
                 .font(.title.bold())
 
-            Text("Hãy nhập tên thành phố để lấy dữ liệu thời tiết thật từ OpenWeather.")
+            Text("Hãy nhập tên thành phố để lấy dữ liệu thời tiết thật từ Weather API.")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
