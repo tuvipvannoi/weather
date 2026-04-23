@@ -8,7 +8,7 @@ final class WeatherViewModel: ObservableObject {
     @Published var countryName: String = ""
     @Published var temperatureText: String = "--°C"
     @Published var humidityText: String = "--%"
-    @Published var windSpeedText: String = "-- m/s"
+    @Published var windSpeedText: String = "-- km/h"
     @Published var conditionText: String = "Chưa có dữ liệu"
     @Published var iconURLString: String = ""
     @Published var isLoading: Bool = false
@@ -38,28 +38,44 @@ final class WeatherViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let location = try await geocodingService.searchCity(named: trimmedCity)
-            let weather = try await weatherService.fetchWeather(
-                latitude: location.latitude,
-                longitude: location.longitude
-            )
+            let weather = try await weatherService.fetchWeather(city: trimmedCity)
 
-            cityName = weather.name
-            countryName = location.country
-            temperatureText = "\(Int(weather.main.temp.rounded()))°C"
-            humidityText = "\(weather.main.humidity)%"
-            windSpeedText = "\(String(format: "%.1f", weather.wind.speed)) m/s"
-            conditionText = weather.weather.first?.description.capitalized ?? "Không có mô tả"
-
-            if let icon = weather.weather.first?.icon {
-                iconURLString = "https://openweathermap.org/img/wn/\(icon)@2x.png"
-            } else {
-                iconURLString = ""
-            }
-
+            cityName = weather.location.name
+            countryName = weather.location.country
+            temperatureText = "\(Int(weather.current.temp_c.rounded()))°C"
+            humidityText = "\(weather.current.humidity)%"
+            windSpeedText = "\(String(format: "%.1f", weather.current.wind_kph)) km/h"
+            conditionText = weather.current.condition.text
+            iconURLString = "https:\(weather.current.condition.icon)"
             hasWeatherData = true
         } catch {
             hasWeatherData = false
+            errorMessage = error.localizedDescription
+        }
+
+        isLoading = false
+    }
+
+    func loadWeatherForCurrentLocation(latitude: Double, longitude: Double) async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let weather = try await weatherService.fetchWeather(
+                latitude: latitude,
+                longitude: longitude
+            )
+
+            cityName = weather.location.name
+            countryName = weather.location.country
+            temperatureText = "\(Int(weather.current.temp_c.rounded()))°C"
+            humidityText = "\(weather.current.humidity)%"
+            windSpeedText = "\(String(format: "%.1f", weather.current.wind_kph)) km/h"
+            conditionText = weather.current.condition.text
+            iconURLString = "https:\(weather.current.condition.icon)"
+            hasWeatherData = true
+        } catch {
+hasWeatherData = false
             errorMessage = error.localizedDescription
         }
 
@@ -72,7 +88,7 @@ final class WeatherViewModel: ObservableObject {
         countryName = ""
         temperatureText = "--°C"
         humidityText = "--%"
-        windSpeedText = "-- m/s"
+        windSpeedText = "-- km/h"
         conditionText = "Chưa có dữ liệu"
         iconURLString = ""
         hasWeatherData = false

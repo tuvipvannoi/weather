@@ -1,23 +1,23 @@
 import Foundation
 
 struct WeatherAPIResponse: Codable {
-    let location: Location
-    let current: Current
+    let location: WeatherLocation
+    let current: WeatherCurrent
 }
 
-struct Location: Codable {
+struct WeatherLocation: Codable {
     let name: String
     let country: String
 }
 
-struct Current: Codable {
+struct WeatherCurrent: Codable {
     let temp_c: Double
     let humidity: Int
     let wind_kph: Double
-    let condition: Condition
+    let condition: WeatherCondition
 }
 
-struct Condition: Codable {
+struct WeatherCondition: Codable {
     let text: String
     let icon: String
 }

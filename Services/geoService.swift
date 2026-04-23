@@ -28,13 +28,19 @@ final class GeocodingService: GeocodingServiceProtocol {
             throw GeocodingServiceError.invalidURL
         }
 
+        print("Geocoding URL:", url.absoluteString)
+
         let (data, response) = try await URLSession.shared.data(from: url)
 
-        if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
-            throw GeocodingServiceError.cityNotFound
+        if let httpResponse = response as? HTTPURLResponse {
+            print("Geocoding status:", httpResponse.statusCode)
         }
 
+        print("Geocoding raw JSON:", String(data: data, encoding: .utf8) ?? "nil")
+
         let decoded = try JSONDecoder().decode([OpenWeatherGeocodingItem].self, from: data)
+
+        print("Decoded city count:", decoded.count)
 
         guard let first = decoded.first else {
             throw GeocodingServiceError.cityNotFound
